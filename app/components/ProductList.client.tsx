@@ -22,6 +22,7 @@ const ProductList = () => {
   const [selectedSortBy, setSelectedSortBy] = useState<string | undefined>()
   const [searchText, setSearchText] = useState<string>("")
   const [debouncedSearchText, setDebouncedSearchText] = useState("")
+  const [isSearchDisabled, setIsSearchDisabled] = useState(false)
   const [hasNextPage, setHasNextPage] = useState(true)
 
   // + Function To Get Product List
@@ -116,6 +117,8 @@ const ProductList = () => {
                 onChange={(e) => {
                   setProductList([])
                   setSelectedCategory(e)
+                  setSearchText("")
+                  setIsSearchDisabled(true)
                 }}
                 items={productCategoryList}
               />
@@ -161,6 +164,7 @@ const ProductList = () => {
                 onChange={(e) => {
                   setSearchText(e.data as string)
                 }}
+                isDisabled={isSearchDisabled}
               />
             </div>
           </div>

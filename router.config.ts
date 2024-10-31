@@ -30,11 +30,16 @@ export const PATHS = {
     }) => {
       if (category) {
         return {
-          root: `/products/category/${category}?skip=0${order ? `&order=${order}` : ""}${limit ? `&limit=${limit}` : ""}${sortBy ? `&sortBy=${sortBy}` : ""}${searchText && searchText.trim().length > 0 ? `&q=${searchText}` : ""}` as const,
+          root: `/products/category/${category}?skip=0${order ? `&order=${order}` : ""}${limit ? `&limit=${limit}` : ""}${sortBy ? `&sortBy=${sortBy}` : ""}` as const,
         }
       } else {
+        if (searchText && searchText.trim().length > 0) {
+          return {
+            root: `/products/search?skip=0${order ? `&order=${order}` : ""}${limit ? `&limit=${limit}` : ""}${sortBy ? `&sortBy=${sortBy}` : ""}&q=${searchText}` as const,
+          }
+        }
         return {
-          root: `/products?skip=0${order ? `&order=${order}` : ""}${limit ? `&limit=${limit}` : ""}${sortBy ? `&sortBy=${sortBy}` : ""}${searchText && searchText.trim().length > 0 ? `&q=${searchText}` : ""}` as const,
+          root: `/products?skip=0${order ? `&order=${order}` : ""}${limit ? `&limit=${limit}` : ""}${sortBy ? `&sortBy=${sortBy}` : ""}` as const,
         }
       }
     },
