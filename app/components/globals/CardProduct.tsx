@@ -27,7 +27,10 @@ export default function CardProduct({ productDetail, className }: CardProductPro
   const [cachedData, setCachedData] = useState<any[]>([])
   const [isWishlisted, setIsWishlisted] = useState(false)
 
+  const [isHovered, setIsHovered] = useState(false)
+
   const { addToCart, removeItem, removeFromCart, items } = useCartStore((state) => state)
+  const isInCart = items.some((item) => item.id === productDetail.id)
 
   const toggleWishlist = async () => {
     if (isWishlisted) {
@@ -71,6 +74,8 @@ export default function CardProduct({ productDetail, className }: CardProductPro
           "group/card product-card transform transition-all duration-200 ease-in-out hover:scale-[1.02]",
           className
         )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         <Card className="mx-auto max-w-sm overflow-hidden rounded-lg shadow-lg transition-shadow duration-300 hover:shadow-2xl">
           <div className="relative border-b-2">
@@ -117,50 +122,52 @@ export default function CardProduct({ productDetail, className }: CardProductPro
             </div>
 
             {/* Action Buttons */}
-            <div className="absolute bottom-2 left-1/2 w-5/6 -translate-x-1/2 transform space-y-2">
-              {items.findIndex((data) => data.id == productDetail.id) != -1 ? (
-                <Button
-                  variant="outline"
-                  className="flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 bg-green-500 p-2 text-white transition-all duration-150"
-                >
-                  {items.filter((data) => data.id == productDetail.id).length == 1 && (
-                    <Trash className="h-4 w-4" onClick={() => removeFromCart(productDetail.id)} />
-                  )}
-                  {items.filter((data) => data.id == productDetail.id).length > 1 && (
-                    <Minus className="h-4 w-4" onClick={() => removeItem(productDetail.id)} />
-                  )}
-                  {items.filter((data) => data.id == productDetail.id).length} Added to Cart
-                  <Plus
+            {(isInCart || isHovered) && (
+              <div className="absolute bottom-2 left-1/2 w-5/6 -translate-x-1/2 transform space-y-2">
+                {items.findIndex((data) => data.id == productDetail.id) != -1 ? (
+                  <Button
+                    variant="outline"
+                    className="flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 bg-green-500 p-2 text-white transition-all duration-150"
+                  >
+                    {items.filter((data) => data.id == productDetail.id).length == 1 && (
+                      <Trash className="h-4 w-4" onClick={() => removeFromCart(productDetail.id)} />
+                    )}
+                    {items.filter((data) => data.id == productDetail.id).length > 1 && (
+                      <Minus className="h-4 w-4" onClick={() => removeItem(productDetail.id)} />
+                    )}
+                    {items.filter((data) => data.id == productDetail.id).length} Added to Cart
+                    <Plus
+                      onClick={() => {
+                        addToCart(productDetail)
+                      }}
+                      className="h-4 w-4"
+                    />
+                  </Button>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-white p-2 text-gray-800 transition-all duration-150 hover:bg-gray-50"
                     onClick={() => {
                       addToCart(productDetail)
                     }}
-                    className="h-4 w-4"
-                  />
-                </Button>
-              ) : (
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Add to Cart
+                  </Button>
+                )}
+
                 <Button
                   variant="secondary"
                   className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-white p-2 text-gray-800 transition-all duration-150 hover:bg-gray-50"
                   onClick={() => {
-                    addToCart(productDetail)
+                    setShowModal(true)
                   }}
                 >
-                  <ShoppingCart className="h-4 w-4" />
-                  Add to Cart
+                  <Eye className="h-4 w-4" />
+                  Quick View
                 </Button>
-              )}
-
-              <Button
-                variant="secondary"
-                className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-white p-2 text-gray-800 transition-all duration-150 hover:bg-gray-50"
-                onClick={() => {
-                  setShowModal(true)
-                }}
-              >
-                <Eye className="h-4 w-4" />
-                Quick View
-              </Button>
-            </div>
+              </div>
+            )}
           </div>
 
           {/* Product Details */}
