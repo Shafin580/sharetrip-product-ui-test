@@ -7,11 +7,14 @@ import { LINKS } from "router.config"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
+import { useCartStore } from "@utils/providers/CartStore.Providers"
 
 export default function Navbar() {
   const [cartItemCount, setCartItemCount] = useState(15)
   const [isScrolled, setIsScrolled] = useState(false)
   const router = useRouter()
+
+  const { items } = useCartStore((state) => state)
 
   useEffect(() => {
     const handleScroll = () => {
