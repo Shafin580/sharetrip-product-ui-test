@@ -5,11 +5,6 @@ export const LINKS = {
   HOME: "/" as const,
   WISHLIST: "/wishlist" as const,
   CART: "/cart" as const,
-  PRODUCTS: {
-    DYNAMIC: (id: string) => {
-      return { path: `/products/${id}` as const }
-    },
-  } as const,
   ERROR: (code: number) => {
     return { home: `/error?code=${code}` } as const
   },
