@@ -172,7 +172,7 @@ export default function CardProduct({ productDetail, className }: CardProductPro
 
           {/* Product Details */}
           <div className="space-y-2 p-4">
-            <div className="text-xs font-medium text-gray-500">{productDetail.category}</div>
+            <div className="text-xs font-medium text-gray-500">SKU: {productDetail.sku}</div>
             <h3 className="truncate text-base font-semibold">{productDetail.title}</h3>
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-blue-500">

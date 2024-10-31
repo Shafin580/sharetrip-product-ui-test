@@ -106,10 +106,11 @@ const ProductList = () => {
         {/*//- Right Area */}
         <div className="w-full">
           {/*//- Top Filter Bar */}
-          <div className="flex items-start justify-between pb-4">
-            <div className="flex gap-6">
-              {/* {category dropdown} */}
+          <div className="flex flex-col items-center justify-between space-y-4 pb-6 md:flex-row md:items-start md:space-y-0">
+            {/* Dropdowns */}
+            <div className="flex gap-4 md:gap-6">
               <Combobox
+                className="w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 md:w-48"
                 placeholder="Select Category"
                 hideTypeAhead
                 onChange={(e) => {
@@ -118,29 +119,28 @@ const ProductList = () => {
                 }}
                 items={productCategoryList}
               />
-              {/* {sort dropdown} */}
               <Combobox
+                className="w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500 md:w-48"
                 placeholder="Select Sort"
                 hideTypeAhead
                 onChange={(e) => {
-                  if (e == "Title (A to Z)") {
-                    setSelectedSortBy("title")
-                    setSelectedOrder("asc")
-                  }
-
-                  if (e == "Title (Z to A)") {
-                    setSelectedSortBy("title")
-                    setSelectedOrder("desc")
-                  }
-
-                  if (e == "Price (Low to High)") {
-                    setSelectedSortBy("price")
-                    setSelectedOrder("asc")
-                  }
-
-                  if (e == "Price (High to Low)") {
-                    setSelectedSortBy("price")
-                    setSelectedOrder("desc")
+                  switch (e) {
+                    case "Title (A to Z)":
+                      setSelectedSortBy("title")
+                      setSelectedOrder("asc")
+                      break
+                    case "Title (Z to A)":
+                      setSelectedSortBy("title")
+                      setSelectedOrder("desc")
+                      break
+                    case "Price (Low to High)":
+                      setSelectedSortBy("price")
+                      setSelectedOrder("asc")
+                      break
+                    case "Price (High to Low)":
+                      setSelectedSortBy("price")
+                      setSelectedOrder("desc")
+                      break
                   }
                 }}
                 items={[
@@ -151,17 +151,20 @@ const ProductList = () => {
                 ]}
               />
             </div>
+
+            {/* Search Field */}
+            <div className="flex w-full md:w-72">
+              <TextField
+                className="w-full rounded-md border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                placeholder="Search Products"
+                value={searchText}
+                onChange={(e) => {
+                  setSearchText(e.data as string)
+                }}
+              />
+            </div>
           </div>
 
-          <div className="mb-6 w-[350px] mx-auto">
-            <TextField
-              placeholder="Search Products"
-              value={searchText}
-              onChange={(e) => {
-                setSearchText(e.data as string)
-              }}
-            />
-          </div>
           {/*//+ Grid Area */}
           <div className="grid grid-cols-2 gap-8 md:gap-10 lg:grid-cols-3 xl:grid-cols-4">
             {productList.map((data, index) => {
