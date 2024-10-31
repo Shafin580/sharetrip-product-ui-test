@@ -10,7 +10,7 @@ import { QUERY } from "query.config"
 import { useEffect, useState } from "react"
 import { LINKS } from "router.config"
 import SkeletonCard from "./Skeleton/SkeletonCard"
-import { getProductList } from "services/api/api"
+import { getProductCategoryList, getProductList } from "services/api/api"
 
 const ProductList = () => {
   const [productList, setProductList] = useState<ProductProps[]>([])
@@ -60,6 +60,25 @@ const ProductList = () => {
     }
   }, [productListQuery])
 
+  // + Function To Get Product Category List
+  const { data: productCategoryListQuery, isFetching: productCategoryListFetchingQuery } = useQuery({
+    queryKey: [QUERY.PRODUCTS.CATEGORY_LIST().key],
+    queryFn: async () => {
+      const data = await getProductCategoryList()
+      return data
+    },
+  })
+
+  useEffect(() => {
+    if (productCategoryListQuery) {
+      if (productCategoryListQuery.status == 200) {
+        setProductCategoryList(
+          productCategoryListQuery.data.map((element, index) => ({ value: String(index), label: element }))
+        )
+      }
+    }
+  }, [productCategoryListQuery])
+
   // + useEffect call for pagination
   useEffect(() => {
     setLimit(30 * pageNo)
@@ -88,44 +107,69 @@ const ProductList = () => {
         <div className="w-full">
           {/*//- Top Filter Bar */}
           <div className="flex items-start justify-between pb-4">
-            {/* Left Section */}
-            <div className="space-y-3">
-              <TextField
-                placeholder="Search Products"
-                value={searchText}
+            <div className="flex gap-6">
+              {/* {category dropdown} */}
+              <Combobox
+                placeholder="Select Category"
+                hideTypeAhead
                 onChange={(e) => {
-                  setSearchText(e.data as string)
+                  setProductList([])
+                  setSelectedCategory(e)
                 }}
+                items={productCategoryList}
+              />
+              {/* {sort dropdown} */}
+              <Combobox
+                placeholder="Select Sort"
+                hideTypeAhead
+                onChange={(e) => {
+                  if (e == "Title (A to Z)") {
+                    setSelectedSortBy("title")
+                    setSelectedOrder("asc")
+                  }
+
+                  if (e == "Title (Z to A)") {
+                    setSelectedSortBy("title")
+                    setSelectedOrder("desc")
+                  }
+
+                  if (e == "Price (Low to High)") {
+                    setSelectedSortBy("price")
+                    setSelectedOrder("asc")
+                  }
+
+                  if (e == "Price (High to Low)") {
+                    setSelectedSortBy("price")
+                    setSelectedOrder("desc")
+                  }
+                }}
+                items={[
+                  { value: "1", label: "Title (A to Z)" },
+                  { value: "2", label: "Title (Z to A)" },
+                  { value: "3", label: "Price (Low to High)" },
+                  { value: "4", label: "Price (High to Low)" },
+                ]}
               />
             </div>
-            {/* Right Section Sort Dropdown */}
-            {/* {category dropdown} */}
-            <Combobox
-              placeholder="Select Category"
-              hideTypeAhead
+          </div>
+
+          <div className="mb-6 w-[350px] mx-auto">
+            <TextField
+              placeholder="Search Products"
+              value={searchText}
               onChange={(e) => {
-                setSelectedCategory(e)
+                setSearchText(e.data as string)
               }}
-              items={productCategoryList}
             />
           </div>
           {/*//+ Grid Area */}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {productList.map((data, index) => {
-              return (
-                <CardProduct
-                  key={index}
-                  id={String(data.id)}
-                  productImage={data.images[0]}
-                  title={data.title}
-                  href={LINKS.PRODUCTS.DYNAMIC(String(data.id)).path}
-                />
-              )
+              return <CardProduct key={index} productDetail={data} />
             })}
             {productList.length == 0 &&
               productListFetchingQuery &&
-              Array.from({ length: 10 }).map((_, index) => <SkeletonCard key={index} />)
-              }
+              Array.from({ length: 10 }).map((_, index) => <SkeletonCard key={index} />)}
             {productList.length > 0 &&
               productListFetchingQuery &&
               Array.from({ length: 10 }).map((_, index) => <SkeletonCard key={index} />)}

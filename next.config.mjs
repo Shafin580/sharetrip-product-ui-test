@@ -8,12 +8,18 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "https://dummyjson.com",
+        hostname: "cdn.dummyjson.com",
         port: "",
-        pathname: "/cache/**",
-        // search: "",
       },
     ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/dummyjson/:path*",
+        destination: "https://dummyjson.com/:path*",
+      },
+    ]
   },
 }
 

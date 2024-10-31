@@ -1,7 +1,8 @@
-import { Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react"
-import { Fragment, memo, useRef, useState } from "react"
-import ButtonIcon from "./ButtonIcon"
-import { cn } from "@/libs/utils"
+import { Fragment, useRef, useState, memo, useEffect } from "react"
+import { Dialog, Transition } from "@headlessui/react"
+
+import { cn } from "tailwind-cn"
+import ButtonIcon from "@components/library/ButtonIcon"
 
 export interface ModalBlankProps {
   showBackdrop?: boolean
@@ -9,10 +10,10 @@ export interface ModalBlankProps {
   modalSize?: "sm" | "md" | "lg" | "full"
   modalAlign?: "center" | "top"
   modalBgClassName?: string
+  modalLayoutClassName?: string
   showCrossButton?: boolean
   containerClassName?: string
   className?: string
-  crossBtnClassName?: string
   onCloseModal?: Function
   onClickOutToClose?: boolean
 }
@@ -41,12 +42,12 @@ const ModalBlank = memo(function ModalBlank({
   modalSize = "lg",
   modalAlign = "center",
   onCloseModal,
-  modalBgClassName = "bg-white",
+  modalBgClassName = "bg-background",
   onClickOutToClose = false,
   containerClassName,
   className,
-  crossBtnClassName,
   showCrossButton,
+  modalLayoutClassName,
 }: ModalBlankProps) {
   const [open, setOpen] = useState(true)
   const cancelButtonRef = useRef(null)
@@ -57,19 +58,19 @@ const ModalBlank = memo(function ModalBlank({
   }
 
   return (
-    <Transition show={open} as={Fragment}>
+    <Transition.Root show={open} as={Fragment}>
       <Dialog
         as="div"
         className={cn("relative z-40", containerClassName)}
         initialFocus={cancelButtonRef}
         onClose={() => {
-          if (onClickOutToClose || onCloseModal) {
+          if (onClickOutToClose) {
             onClose()
           }
         }}
       >
         {showBackdrop == true && (
-          <TransitionChild
+          <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
@@ -79,14 +80,17 @@ const ModalBlank = memo(function ModalBlank({
             leaveTo="opacity-0"
           >
             <div className="fixed inset-0 z-40 bg-slate-900 bg-opacity-75 transition-opacity" />
-          </TransitionChild>
+          </Transition.Child>
         )}
 
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div
-            className={`flex min-h-full justify-center p-20 ${modalAlign == "top" ? "items-start" : "items-center"} `}
+            className={cn(
+              `flex min-h-full justify-center p-20 ${modalAlign == "top" ? "items-start" : "items-center"} `,
+              modalLayoutClassName
+            )}
           >
-            <TransitionChild
+            <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"
               enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -95,7 +99,7 @@ const ModalBlank = memo(function ModalBlank({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <DialogPanel
+              <Dialog.Panel
                 className={cn(
                   "modal-blank relative transform space-y-20 rounded-lg p-20 shadow-xl transition-all sm:my-8 sm:w-full sm:p-24",
                   modalSize == "sm" && "w-full sm:max-w-lg",
@@ -109,10 +113,12 @@ const ModalBlank = memo(function ModalBlank({
                 {/* // ! Close Button */}
                 {showCrossButton && (
                   <div
-                    className={cn(
-                      "absolute right-12 top-12 rounded-full p-4 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-500",
-                      crossBtnClassName
-                    )}
+                    className={`absolute ${
+                      modalSize == "sm" ? "right-4 top-4" : "md:right-4 md:top-4"
+                    } right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-500 dark:hover:bg-rose-950/50`}
+                    onClick={() => {
+                      onClose()
+                    }}
                   >
                     <ButtonIcon
                       iconName="x-close"
@@ -123,12 +129,12 @@ const ModalBlank = memo(function ModalBlank({
                   </div>
                 )}
                 {children}
-              </DialogPanel>
-            </TransitionChild>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
         </div>
       </Dialog>
-    </Transition>
+    </Transition.Root>
   )
 })
 export default ModalBlank
