@@ -10,12 +10,28 @@ import Image from "next/image"
 import { useCartStore } from "@utils/providers/CartStore.Providers"
 
 export default function Navbar() {
-  const [cartItemCount, setCartItemCount] = useState(15)
+  const [cartItemCount, setCartItemCount] = useState(0)
   const [isScrolled, setIsScrolled] = useState(false)
   const router = useRouter()
 
   const { items } = useCartStore((state) => state)
 
+  // + useEffect call to calculate cart items
+  useEffect(() => {
+    const uniqueProducts = items.reduce((acc: ProductProps[], item) => {
+      const found = acc.find((prod) => prod.id === item.id)
+      if (found) {
+        found.count! += 1
+      } else {
+        acc.push({ ...item, count: 1 })
+      }
+      return acc
+    }, [])
+    console.log("Debug Navbar Cart Count", uniqueProducts.length, uniqueProducts)
+    setCartItemCount(uniqueProducts.length)
+  }, [items])
+
+  // + useEffect call to add sticky to navbar
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {

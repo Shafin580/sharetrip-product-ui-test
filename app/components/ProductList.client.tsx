@@ -163,7 +163,7 @@ const ProductList = () => {
             />
           </div>
           {/*//+ Grid Area */}
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 md:gap-10 lg:grid-cols-3 xl:grid-cols-4">
             {productList.map((data, index) => {
               return <CardProduct key={index} productDetail={data} />
             })}

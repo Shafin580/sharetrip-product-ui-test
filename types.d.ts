@@ -25,4 +25,5 @@ type ProductProps = {
   meta: { createdAt: string; updatedAt: string; barcode: string; qrCode: string }
   thumbnail: string
   images: string[]
+  count?: number
 }

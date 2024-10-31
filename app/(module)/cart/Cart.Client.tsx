@@ -1,35 +1,36 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import Image from "next/image"
 import { fallbackImage } from "services/api/api"
-
-// Simulated cart data
-const initialCartItems = [
-  { id: 1, name: "Product 1", price: 19.99, quantity: 2, image: fallbackImage },
-  { id: 2, name: "Product 2", price: 29.99, quantity: 1, image: fallbackImage },
-  { id: 3, name: "Product 3", price: 39.99, quantity: 3, image: fallbackImage },
-]
+import { useCartStore } from "@utils/providers/CartStore.Providers"
 
 export default function Cart() {
-  const [cartItems, setCartItems] = useState(initialCartItems)
+  const { items, addToCart, removeItem, removeFromCart } = useCartStore((state) => state)
+  const [cartItems, setCartItems] = useState<ProductProps[]>([])
 
-  const updateQuantity = (id: number, change: number) => {
-    setCartItems((items) =>
-      items
-        .map((item) => (item.id === id ? { ...item, quantity: Math.max(0, item.quantity + change) } : item))
-        .filter((item) => item.quantity > 0)
-    )
-  }
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + (item.price - item.price * (item.discountPercentage / 100)) * item.count!,
+    0
+  )
 
-  const removeItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
-  }
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  // + useEffect call to calculate cart items
+  useEffect(() => {
+    const uniqueProducts = items.reduce((acc: ProductProps[], item) => {
+      const found = acc.find((prod) => prod.id === item.id)
+      if (found) {
+        found.count! += 1
+      } else {
+        acc.push({ ...item, count: 1 })
+      }
+      return acc
+    }, [])
+    console.log("Debug Cart Items", uniqueProducts)
+    setCartItems(uniqueProducts)
+  }, [items])
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -45,34 +46,39 @@ export default function Cart() {
               {cartItems.map((item) => (
                 <li key={item.id} className="flex items-center space-x-4 py-4">
                   <Image
-                    src={item.image}
-                    alt={item.name}
+                    src={item.thumbnail}
+                    alt={item.title}
                     height={400}
                     width={300}
                     className="h-16 w-16 rounded object-cover"
                   />
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                    <h3 className="text-lg font-semibold">{item.title}</h3>
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg font-bold text-blue-500">
+                        ৳ {Number(item.price - item.price * (item.discountPercentage / 100)).toFixed(2)}
+                      </span>
+                      <span className="text-sm text-gray-400 line-through">৳ {item.price}</span>
+                    </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => updateQuantity(item.id, -1)}
-                      disabled={item.quantity <= 1}
+                      onClick={() => removeItem(item.id)}
+                      disabled={item.count! <= 1}
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-                    <span className="w-8 text-center">{item.quantity}</span>
-                    <Button variant="outline" size="icon" onClick={() => updateQuantity(item.id, 1)}>
+                    <span className="w-8 text-center">{item.count}</span>
+                    <Button variant="outline" size="icon" onClick={() => addToCart(item)}>
                       <Plus className="h-4 w-4" />
                     </Button>
                   </div>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => removeFromCart(item.id)}
                     className="text-red-500 hover:text-red-700"
                   >
                     <Trash2 className="h-5 w-5" />
@@ -83,7 +89,7 @@ export default function Cart() {
           )}
         </CardContent>
         <CardFooter className="flex flex-col items-center justify-between sm:flex-row">
-          <div className="mb-4 text-xl font-semibold sm:mb-0">Subtotal: ${subtotal.toFixed(2)}</div>
+          <div className="mb-4 text-xl font-semibold sm:mb-0">Subtotal: ৳{subtotal.toFixed(2)}</div>
           <Button className="w-full sm:w-auto" disabled={cartItems.length === 0}>
             Proceed to Checkout
           </Button>

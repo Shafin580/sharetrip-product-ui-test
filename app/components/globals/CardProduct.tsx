@@ -123,7 +123,12 @@ export default function CardProduct({ productDetail, className }: CardProductPro
                   variant="outline"
                   className="flex w-full items-center justify-between gap-2 rounded-md border border-gray-200 bg-green-500 p-2 text-white transition-all duration-150"
                 >
-                  <Trash className="h-4 w-4" onClick={() => removeFromCart(productDetail.id)} />
+                  {items.filter((data) => data.id == productDetail.id).length == 1 && (
+                    <Trash className="h-4 w-4" onClick={() => removeFromCart(productDetail.id)} />
+                  )}
+                  {items.filter((data) => data.id == productDetail.id).length > 1 && (
+                    <Minus className="h-4 w-4" onClick={() => removeItem(productDetail.id)} />
+                  )}
                   {items.filter((data) => data.id == productDetail.id).length} Added to Cart
                   <Plus
                     onClick={() => {
