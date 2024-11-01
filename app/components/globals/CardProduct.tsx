@@ -115,9 +115,9 @@ export default function CardProduct({ productDetail, className }: CardProductPro
                 height={400}
                 width={300}
                 src={productImageSrc}
-                onError={() => {
-                  setProductImageSrc(fallbackImage)
-                }}
+                // onError={() => {
+                //   setProductImageSrc(fallbackImage)
+                // }}
               />
             </div>
 

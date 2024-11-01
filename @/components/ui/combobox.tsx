@@ -35,7 +35,7 @@ export function Combobox({ className = "", hideTypeAhead = false, onChange, item
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-[160px] justify-between"
+            className="w-[170px] justify-between"
           >
             {value ? options.find((data) => data.value === value)?.label : placeholder}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
