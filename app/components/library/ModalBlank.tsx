@@ -115,7 +115,7 @@ const ModalBlank = memo(function ModalBlank({
                   <div
                     className={`absolute ${
                       modalSize == "sm" ? "right-4 top-4" : "md:right-4 md:top-4"
-                    } right-4 top-4 rounded-full p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-500 dark:hover:bg-rose-950/50`}
+                    } right-4 top-12 rounded-full p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-500 dark:hover:bg-rose-950/50`}
                     onClick={() => {
                       onClose()
                     }}

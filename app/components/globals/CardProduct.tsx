@@ -77,13 +77,18 @@ export default function CardProduct({ productDetail, className }: CardProductPro
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
+        {/* Discount Badge */}
+        <div
+          className="absolute left-[-7px] top-2 z-10 px-4 py-2 text-xs font-semibold text-white shadow-md"
+          style={{
+            backgroundImage: "linear-gradient(to right, #f97316, #fb923c, #ffc98f)",
+            clipPath: "polygon(50% 0%, 100% 0, 86% 49%, 100% 100%, 25% 100%, 0 100%, 0 0)",
+          }}
+        >
+          - ৳ {Number(productDetail.price * (productDetail.discountPercentage / 100)).toFixed(2)}
+        </div>
         <Card className="mx-auto max-w-sm overflow-hidden rounded-lg shadow-lg transition-shadow duration-300 hover:shadow-2xl">
           <div className="relative border-b-2">
-            {/* Discount Badge */}
-            <div className="absolute left-0 top-2 z-10 rounded-br-md bg-orange-500 px-2 py-1 text-xs font-semibold text-white shadow-md">
-              - ৳ {Number(productDetail.price * (productDetail.discountPercentage / 100)).toFixed(2)}
-            </div>
-
             {/* Wishlist Button */}
             {isWishlisted == false && (
               <Button
@@ -146,25 +151,25 @@ export default function CardProduct({ productDetail, className }: CardProductPro
                 ) : (
                   <Button
                     variant="secondary"
-                    className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-white p-2 text-gray-800 transition-all duration-150 hover:bg-gray-50"
+                    className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-slate-600/20 p-2 font-extrabold text-white shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-white/50"
                     onClick={() => {
                       addToCart(productDetail)
                     }}
                   >
-                    <ShoppingCart className="h-4 w-4" />
-                    Add to Cart
+                    <ShoppingCart className="h-4 w-4 [text-shadow:_0_8px_8px_rgb(99_102_241_/_0.8)]" />
+                    <span className="[text-shadow:_0_8px_8px_rgb(99_102_241_/_0.8)]">Add to Cart</span>
                   </Button>
                 )}
 
                 <Button
                   variant="secondary"
-                  className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-200 bg-white p-2 text-gray-800 transition-all duration-150 hover:bg-gray-50"
+                  className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-slate-600/20 p-2 font-extrabold text-white shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-white/50"
                   onClick={() => {
                     setShowModal(true)
                   }}
                 >
-                  <Eye className="h-4 w-4" />
-                  Quick View
+                  <Eye className="h-4 w-4 [text-shadow:_0_8px_8px_rgb(99_102_241_/_0.8)]" />
+                  <span className="[text-shadow:_0_8px_8px_rgb(99_102_241_/_0.8)]">Quick View</span>
                 </Button>
               </div>
             )}
